@@ -19,14 +19,12 @@ const CONTENT = {
   groomFull: "Moin Khan",
   initials: "M·N",
   bismillah: "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
-  coverLabel: "Insha Allah Nikah",
+  coverLabel: "Insha Allah Nikah & Reception",
   coverDate: "12 & 13 · 12 · 2026",
   openLabel: "Tap to open",
   gettingMarried: "Insha Allah, are getting married",
   saveDate: "12th & 13th December 2026",
   captions: {
-    forever: "Two hearts, one beautiful beginning",
-    nikah: "Written in the stars, sealed with dua",
     couple: "Join us as our forever begins",
   },
   invite: {
@@ -168,16 +166,11 @@ export default function Invitation() {
     const video = videoRef.current;
     if (video) {
       try {
-        video.muted = false;
-        video.volume = 0.7;
+        /* stays muted — no music on open */
+        video.muted = true;
         video.play().catch(() => {});
-        const fade = window.setInterval(() => {
-          video.volume = Math.max(0, video.volume - 0.03);
-          if (video.volume <= 0.03) window.clearInterval(fade);
-        }, 90);
-        timers.current.push(fade);
       } catch {
-        /* sound is a bonus — ignore */
+        /* playback is a bonus — ignore */
       }
     }
 
@@ -195,7 +188,7 @@ export default function Invitation() {
   useEffect(() => {
     if (phase !== "open") return;
     document
-      .querySelectorAll<HTMLElement>(".bism, .names, .sp1, .home, .cfl")
+      .querySelectorAll<HTMLElement>(".bism, .names, .sp1, .cfl, .nbg")
       .forEach((el) => el.classList.add("in"));
 
     const io = new IntersectionObserver(
@@ -380,18 +373,13 @@ export default function Invitation() {
       )}
 
       <section className="namesec">
+        <span className="nbg" aria-hidden="true" />
         <span className="cfl" aria-hidden="true">
           <i style={{ left: "2px", top: "30px", fontSize: "24px" }}>❀</i>
           <i style={{ left: "86px", top: "2px", fontSize: "14px" }}>✦</i>
           <i style={{ left: "150px", top: "46px", fontSize: "19px" }}>✿</i>
           <i style={{ left: "58px", top: "118px", fontSize: "16px" }}>✦</i>
           <i style={{ left: "8px", top: "98px", fontSize: "13px" }}>❀</i>
-        </span>
-        <span className="home">
-          <img
-            src="/assets/home.jpg"
-            alt={`${CONTENT.groom} and ${CONTENT.bride}`}
-          />
         </span>
         <p className="bism ar rv">{CONTENT.bismillah}</p>
         <h2 className="names script rv wr">
@@ -403,20 +391,6 @@ export default function Invitation() {
       </section>
 
       <div className="duo">
-        <section className="fsec">
-          <div className="fwrap">
-            <div className="frame f1">
-              <div className="pane">
-                <img
-                  src="/assets/forever.jpg"
-                  alt={`${CONTENT.groom} and ${CONTENT.bride}`}
-                />
-              </div>
-            </div>
-          </div>
-          <p className="cap rv">{CONTENT.captions.forever}</p>
-        </section>
-
         <section>
           <div className="card rv">
             <span className="heart">♡</span>
@@ -438,20 +412,6 @@ export default function Invitation() {
       </div>
 
       <div className="duo r">
-        <section className="fsec">
-          <div className="fwrap">
-            <div className="frame f3">
-              <div className="pane">
-                <img
-                  src="/assets/secondPage.jpg"
-                  alt={`${CONTENT.groom} and ${CONTENT.bride} at the nikah`}
-                />
-              </div>
-            </div>
-          </div>
-          <p className="cap rv">{CONTENT.captions.nikah}</p>
-        </section>
-
         <section>
           <p className="std rv">
             Save <i>the</i> Date
@@ -503,8 +463,8 @@ export default function Invitation() {
             <div className="frame f2">
               <div className="pane">
                 <img
-                  src="/assets/lastPhoto.jpg"
-                  alt={`${CONTENT.groom} and ${CONTENT.bride}`}
+                  src="/assets/flower.jpg"
+                  alt="Wedding flowers"
                 />
               </div>
             </div>
@@ -531,10 +491,20 @@ export default function Invitation() {
       </div>
 
       <section className="fam">
-        <div className="ring rv">
-          <span className="ar">{CONTENT.initials}</span>
+        <div className="mono rv" aria-hidden="true">
+          <i>❀</i>
+          <span className="script">
+            {CONTENT.groom[0]} &amp; {CONTENT.bride[0]}
+          </span>
+          <i>❀</i>
         </div>
-        <p className="script rv">
+        <p
+          className="script rv"
+          style={{
+            whiteSpace: "nowrap",
+            fontSize: "var(--famfs, clamp(18px, 6.2vw, 36px))",
+          }}
+        >
           The Families of {CONTENT.groom} &amp; {CONTENT.bride}
         </p>
         <p className="small rv" style={{ marginTop: "8px" }}>

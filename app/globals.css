@@ -228,7 +228,13 @@ section:not(.hero)::before {
   -webkit-text-fill-color: var(--gold);
   margin: 2px 0;
 }
-.sp1 { margin-top: 22px; }
+.sp1 {
+  margin-top: 22px;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  color: var(--ink);
+}
 
 /* ── names section — fills the first screen with only the names ── */
 .namesec {
@@ -239,39 +245,38 @@ section:not(.hero)::before {
   align-items: center;
   padding-top: calc(30px + env(safe-area-inset-top, 0px));
   padding-bottom: 30px;
+  overflow: hidden;
 }
 .namesec .bism { margin-bottom: 24px; }
 .namesec .rv { transition-duration: 2s; }
+.namesec .bism,
+.namesec .names,
+.namesec .sp1,
+.namesec::before { position: relative; z-index: 1; }
 
-/* inclined corner photo — its background melts into the page */
-.home {
+/* the nikkah-nama photo drifts like film behind the names */
+.nbg {
   position: absolute;
-  top: calc(24px + env(safe-area-inset-top, 0px));
-  left: 20px;
-  width: clamp(96px, 28vw, 148px);
-  transform: rotate(-9deg);
+  inset: -6%;
+  z-index: 0;
+  pointer-events: none;
+  background: url("/assets/nikha.jpeg") center / cover no-repeat;
+  filter: blur(1px) saturate(0.96) sepia(0.08);
   opacity: 0;
-  z-index: 2;
 }
-.home img {
-  display: block;
-  width: 100%;
-  -webkit-mask-image: radial-gradient(ellipse 78% 78% at 50% 48%, #000 42%, transparent 90%);
-  mask-image: radial-gradient(ellipse 78% 78% at 50% 48%, #000 42%, transparent 90%);
-}
-.home::after {
+/* butter paper — the photo seen through a translucent sheet,
+   edges melting into the page */
+.nbg::after {
   content: "";
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse 72% 72% at 50% 48%,
-    rgba(243, 239, 232, 0) 45%,
-    rgba(243, 239, 232, 0.5) 75%,
-    rgba(243, 239, 232, 0.92) 100%
-  );
+  background:
+    linear-gradient(rgba(243, 239, 232, 0.48), rgba(243, 239, 232, 0.48)),
+    radial-gradient(ellipse 88% 84% at 50% 48%, rgba(243, 239, 232, 0), rgba(243, 239, 232, 0.55) 97%);
 }
-.home.in { animation: homeslow 2.8s ease 0.35s forwards; }
+.nbg.in {
+  animation: nbgin 3.2s ease 0.15s forwards, nbgdrift 30s ease-in-out 0.3s infinite alternate;
+}
 
 /* gold blossoms scattered around the corner photo */
 .cfl {
@@ -297,7 +302,11 @@ section:not(.hero)::before {
 .cfl.in i:nth-child(4) { animation-delay: 1.25s, 4.2s; }
 .cfl.in i:nth-child(5) { animation-delay: 1.6s, 4.6s; }
 
-@keyframes homeslow { to { opacity: 1; } }
+@keyframes nbgin { to { opacity: 1; } }
+@keyframes nbgdrift {
+  from { transform: scale(1.05) translate(-1.4%, -1%); }
+  to { transform: scale(1.2) translate(1.2%, 1.6%); }
+}
 @keyframes cflin {
   from { opacity: 0; transform: scale(0.3) rotate(-40deg); }
   to { opacity: 0.9; transform: none; }
@@ -469,18 +478,40 @@ section.det {
 .boxes div:last-child { animation: glow 1s ease-in-out infinite; }
 
 /* ── families ───────────────────────────────────────────────────── */
-.fam .ring { border-color: var(--gold); margin: 0 auto; animation: none; width: 92px; height: 92px; }
-.fam .ring::before { border-color: rgba(166, 138, 91, 0.4); }
-.fam .ring span { font-size: 34px; color: var(--gold); }
-.fam .ring::after {
-  content: "";
-  position: absolute;
-  inset: -12px;
-  border-radius: 50%;
-  border: 1px dashed var(--gold);
-  animation: spin 30s linear infinite;
+.fam .mono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 0 auto;
 }
-.fam p.script { font-size: 36px; margin-top: 22px; }
+.fam .mono span {
+  font-size: 58px;
+  line-height: 1;
+  background: linear-gradient(105deg, #8a7350 25%, #d3b57e 45%, #8a7350 65%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: mshine 7s linear infinite;
+}
+.fam .mono i {
+  font-style: normal;
+  color: var(--gold);
+  font-size: 22px;
+  animation: sway 5s ease-in-out infinite;
+}
+.fam .mono i:last-child { animation-delay: 0.45s; }
+
+@keyframes mshine { to { background-position: 220% center; } }
+@keyframes sway { 50% { transform: rotate(16deg) translateY(3px); } }
+.fam p.script {
+  --famfs: clamp(18px, 6.2vw, 36px);
+  font-size: var(--famfs);
+  margin-top: 22px;
+  white-space: nowrap;
+}
 .fam .fine {
   font-size: 10px;
   letter-spacing: 0.2em;
@@ -495,6 +526,12 @@ section.det {
 #amb { position: fixed; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; }
 #amb i { position: absolute; top: -6vh; font-style: normal; color: #c4a46c; opacity: 0; animation: fallp linear infinite; will-change: transform; }
 #amb i.d { width: 5px; height: 5px; border-radius: 50%; background: #d4b87c; box-shadow: 0 0 7px #d4b87c; }
+/* falling petals in a mix of flower colours — gold, rose, blush, peach, ivory */
+#amb i:not(.d):nth-child(5n + 2) { color: #c9838f; }
+#amb i:not(.d):nth-child(5n + 3) { color: #dba7b0; }
+#amb i:not(.d):nth-child(5n + 4) { color: #d9a37f; }
+#amb i:not(.d):nth-child(5n + 5) { color: #e6d9bd; }
+#amb i.d:nth-child(odd) { background: #d49c9c; box-shadow: 0 0 7px #d49c9c; }
 
 /* ── ornate photo frames ────────────────────────────────────────── */
 section.fsec { padding: 30px 0 44px; }
@@ -525,30 +562,13 @@ section.fsec .cap { padding: 0 28px; margin-top: 6px; }
 
 /* photos dissolve into the paper page — no borders, the base .frame
    gradient mask feathers every edge into the website background */
-.f1, .f3 { flex: 0 0 min(calc(100vw - 44px), 480px); }
 .f2 { flex: 0 0 min(calc(100vw - 44px), 440px); }
-.f1 { aspect-ratio: 2 / 3; }
 .f2 { aspect-ratio: 2 / 3; }
-.f3 { aspect-ratio: 3 / 2; }
-.f1 .pane, .f2 .pane, .f3 .pane {
+.f2 .pane {
   position: relative;
   width: 100%;
   height: 100%;
 }
-
-.f1 .pane::before {
-  content: "";
-  position: absolute;
-  top: -20%;
-  bottom: -20%;
-  width: 34%;
-  left: -60%;
-  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-  transform: skewX(-14deg);
-  z-index: 2;
-  pointer-events: none;
-}
-.f1.in .pane::before { animation: glint2 6s 2s ease-in-out infinite; }
 
 /* ── keyframes ──────────────────────────────────────────────────── */
 @keyframes fade { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
@@ -577,7 +597,6 @@ section.fsec .cap { padding: 0 28px; margin-top: 6px; }
 @keyframes slideb { to { background-position: 100% 0; } }
 @keyframes bob { 50% { transform: translateY(-4px); } }
 @keyframes glow { 50% { box-shadow: 0 10px 26px -8px rgba(166, 138, 91, 0.85); } }
-@keyframes glint2 { 0% { left: -60%; } 30%, 100% { left: 140%; } }
 
 /* ── desktop layout ─────────────────────────────────────────────── */
 @media (min-width: 900px) {
@@ -596,6 +615,7 @@ section.fsec .cap { padding: 0 28px; margin-top: 6px; }
   .duo > section { max-width: none; margin: 0; padding: 50px 0; }
   .duo > section::before { display: none; }
   .duo.r > section:first-child { order: 2; }
+  .duo:has(> section:only-child) { grid-template-columns: minmax(0, 720px); }
 
   .bism { font-size: 56px; }
   .names { font-size: clamp(90px, 9vw, 140px); }
@@ -603,7 +623,6 @@ section.fsec .cap { padding: 0 28px; margin-top: 6px; }
   .small { font-size: 14px; }
 
   section.fsec { padding: 50px 0 60px; }
-  .f1, .f3 { flex-basis: 500px; }
   .f2 { flex: 0 0 500px; }
 
   .card { padding: 64px 56px; }
@@ -643,9 +662,9 @@ section.fsec .cap { padding: 0 28px; margin-top: 6px; }
   .boxes strong { font-size: 44px; }
   .boxes small { font-size: 12px; }
 
-  .fam p.script { font-size: 60px; }
-  .fam .ring { width: 112px; height: 112px; }
-  .fam .ring span { font-size: 42px; }
+  .fam p.script { --famfs: 60px; }
+  .fam .mono span { font-size: 76px; }
+  .fam .mono i { font-size: 27px; }
 
   .ring { width: 164px; height: 164px; }
   .ring span { font-size: 60px; }
@@ -660,8 +679,9 @@ section.fsec .cap { padding: 0 28px; margin-top: 6px; }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
   .rv, .frame { opacity: 1; transform: none; }
-  .home { opacity: 1; }
   .cfl i { opacity: 0.85; }
+  .nbg { opacity: 1; animation: none; }
+  .fam .mono span, .fam .mono i { animation: none; }
   .wr { clip-path: none; }
   .pane img { opacity: 1; }
   .line { transform: none; }
